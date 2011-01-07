@@ -20,14 +20,14 @@ var currentLongitude = null;
  * @param {String}  filename  保存ファイル名
  */
 function saveFile(image, filename) {
-  var dir = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, "Resources/images");
-  if (!dir.exists()) {
-    var parentDir = Titanium.Filesystem.getFile(dir.getParent());
-    parentDir.createDirectory();
-    dir.createDirectory();
-  }
+//  var dir = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, "Resources/images);
+//  if (!dir.exists()) {
+//    var parentDir = Titanium.Filesystem.getFile(dir.getParent());
+//    parentDir.createDirectory();
+//    dir.createDirectory();
+//  }
   
-  var file = Ti.Filesystem.getFile(dir.nativePath, filename);
+  var file = Ti.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, filename);
   file.write(image);
   Titanium.API.info("saved file path: " + file.nativePath);
   return file;
