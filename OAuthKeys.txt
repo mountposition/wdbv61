@@ -1,0 +1,8 @@
+# Twitter OAuth Info
+consumer_key:  KbWwtrLBiJInITNuOHwCA
+consumer_secret:  WBVXVv9W8V7PZKa1MvvLxOHFnquQRQQOuasGNs62iA
+access_token.token:  223726446-Hslfget53mwqZDZhwEY3V2ELVks8kXo7M9gHgEiQ
+access_token.secret:  lGHaWEEk6BJyhZbAXdSlaS38YvPAnYExNNjSHUOKEsI
+
+# OAuth Javascript library
+http://code.google.com/p/oauth/source/browse/

@@ -1,0 +1,6 @@
+tmp
+**/.DS_Store
+build/iphone/**/*
+build/iphone/build/**/*
+build/iphone/main.m
+build/iphone/Resources/.version
