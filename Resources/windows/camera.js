@@ -20,6 +20,7 @@ var currentLongitude = null;
  * @param {String}  filename  保存ファイル名
  */
 function saveFile(image, filename) {
+// サブディレクトリが必要な場合は、以下のようにしてディレクトリの存在確認と必要であればディレクトリを作るというコードが必要になる。
 //  var dir = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory, "Resources/images);
 //  if (!dir.exists()) {
 //    var parentDir = Titanium.Filesystem.getFile(dir.getParent());
@@ -198,34 +199,6 @@ var showRegisterForm = function(image, saveWithPhotoGallery) {
   currentWindow.add(registerForm);
 };
 
-/**
- * 写真撮影位置を取得する
- * Titanium は内部で UIImagePickerController を使っていてカメラのジオタグが保存されないため
- * GeoLocation から取得する。
- * Titanium.Geolocation.getCurrentPosition だと一度だけ現在位置を取得するため
- * 精度が低い場合があるので、Titanium.Geolocation.addEventListener("location") を使っている。
- */
-(function() {
-  // 現在位置を取得する
-  var getCurrentLocation = function(e) {
-    currentLongitude = e.coords.longitude;
-    currentLatitude = e.coords.latitude;
-    Titanium.API.debug("current location: [lng: " + currentLongitude + ", lat: " + currentLatitude + "]");
-  };
-  
-  // 裏で LocationListener が起動しっぱなしにならないように、
-  // 画面表示時に LocationListener を設定して画面が非表示になったら Listener を削除する
-  currentWindow.addEventListener("focus", function() {
-    Titanium.Geolocation.purpose = "写真撮影位置を地図上に表示するために使用します。";
-    Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
-    if (Titanium.Geolocation.locationServicesEnabled) {
-      Titanium.Geolocation.addEventListener("location", getCurrentLocation);
-    }
-  });
-  currentWindow.addEventListener("blur", function() {
-    Titanium.Geolocation.removeEventListener("location", getCurrentLocation);
-  });
-})();
 
 var showActionSheet = function(image) {
   var actionSheet = Titanium.UI.createOptionDialog({
@@ -250,56 +223,96 @@ var showActionSheet = function(image) {
 
 
 /**
+ * 写真撮影位置を取得する
+ * Titanium は内部で UIImagePickerController を使っていてカメラのジオタグが保存されないため
+ * GeoLocation から取得する。
+ * Titanium.Geolocation.getCurrentPosition だと一度だけ現在位置を取得するため
+ * 精度が低い場合があるので、Titanium.Geolocation.addEventListener("location") を使っている。
+ */
+// 現在位置を取得する
+var getCurrentLocation = function(e) {
+  currentLongitude = e.coords.longitude;
+  currentLatitude = e.coords.latitude;
+  Titanium.API.debug("current location: [lng: " + currentLongitude + ", lat: " + currentLatitude + "]");
+};
+
+
+/**
  * カメラ表示
  */
 //TODO: シミュレータでしか試せない人用に、サンプル写真を用意しておく。
 //FIXME: Android だと Titanium.Media.isCameraSupported が undefined を返すので
 //       仕方がないので undefined でもカメラを表示する用にしている
-if (Titanium.Media.isCameraSupported || typeof(Titanium.Media.isCameraSupported) == "undefined") {
-  Titanium.Media.showCamera({
-  
-    success: function(event) {
-      var image = event.media;
-      var imageView = Titanium.UI.createImageView({
-        image: image,
-        width: currentWindow.width,
-        height: currentWindow.height
-      });
-      currentWindow.add(imageView);
-      showActionSheet(image);
-    },
-    cancel: function() {
-    },
-    error: function(error) {
-      // create alert
-      var a = Titanium.UI.createAlertDialog({
-        title: 'Camera'
-      });
-      
-      // set message
-      if (error.code == Titanium.Media.NO_CAMERA) {
-        a.setMessage('Device does not have camera.');
-      }
-      else {
-        a.setMessage('Unexpected error: ' + error.code);
-      }
-      
-      // show alert
-      a.show();
-    },
-    allowEditing: false
-  });
+var showCamera = function() {
+  if (Titanium.Media.isCameraSupported || typeof(Titanium.Media.isCameraSupported) == "undefined") {
+    Titanium.Media.showCamera({
+    
+      success: function(event) {
+        var image = event.media;
+        var imageView = Titanium.UI.createImageView({
+          image: image,
+          width: currentWindow.width,
+          height: currentWindow.height
+        });
+        currentWindow.add(imageView);
+        showActionSheet(image);
+      },
+      cancel: function() {
+      },
+      error: function(error) {
+        // create alert
+        var a = Titanium.UI.createAlertDialog({
+          title: 'Camera'
+        });
+        
+        // set message
+        if (error.code == Titanium.Media.NO_CAMERA) {
+          a.setMessage('Device does not have camera.');
+        }
+        else {
+          a.setMessage('Unexpected error: ' + error.code);
+        }
+        
+        // show alert
+        a.show();
+      },
+      allowEditing: false
+    });
+  }
+  else {
+    //========================
+    // カメラが使えない場合
+    //========================
+    
+    var file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, "images/image_sample.jpeg");
+    var image = file.read();
+    var imageView = Titanium.UI.createImageView({
+      image: image
+    });
+    currentWindow.add(imageView);
+    showActionSheet(image);
+  }
+};
+
+
+var hideCamera = function() {
+  if (Titanium.Media.isCameraSupported || typeof(Titanium.Media.isCameraSupported) == "undefined") {
+    Titanium.Media.hideCamera();
+  }
 }
-else {
-  //========================
-  // カメラが使えない場合
-  //========================
-  
-  var file = Titanium.Filesystem.getFile(Titanium.Filesystem.resourcesDirectory, "images/image_sample.jpeg");
-  var image = file.read();
-  var imageView = Titanium.UI.createImageView({
-    image: image
-  });
-  currentWindow.add(imageView);
-  showActionSheet(image);
-}
+
+
+// 裏で LocationListener が起動しっぱなしにならないように、
+// 画面表示時に LocationListener を設定して画面が非表示になったら Listener を削除する
+currentWindow.addEventListener("focus", function() {
+  Titanium.Geolocation.purpose = "写真撮影位置を地図上に表示するために使用します。";
+  Titanium.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
+  if (Titanium.Geolocation.locationServicesEnabled) {
+    Titanium.Geolocation.addEventListener("location", getCurrentLocation);
+  }
+  showCamera();
+});
+currentWindow.addEventListener("blur", function() {
+  Titanium.Geolocation.removeEventListener("location", getCurrentLocation);
+  hideCamera();
+});
