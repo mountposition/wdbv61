@@ -188,6 +188,7 @@ var showRegisterForm = function(image, saveWithPhotoGallery) {
     
     if (twitterFlg.value) {
       TwitterAPI.update(commentArea.value);
+      TwitterAPI.release();
     }
     
     registerForm.hide();

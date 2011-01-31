@@ -3,9 +3,9 @@
 <id>jp.co.mountposition.wdbv61</id>
 <name>wdbv61</name>
 <version>1.0</version>
-<publisher>not specified</publisher>
-<url>not specified</url>
-<description>not specified</description>
+<publisher>gihyo.co.jp</publisher>
+<url>http://www.gihyo.co.jp</url>
+<description>wdbv61 sample app</description>
 <copyright>MOUNTPOSITION, INC</copyright>
 <icon>default_app_logo.png</icon>
     <persistent-wifi>false</persistent-wifi>

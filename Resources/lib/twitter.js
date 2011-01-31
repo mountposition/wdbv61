@@ -26,11 +26,10 @@ var TwitterAPI = {};
     OAuth.setTimestampAndNonce(message);
     OAuth.SignatureMethod.sign(message, accessor);
     
-    //TODO: メモリリーク処理
-    var xhr = Titanium.Network.createHTTPClient();
-    xhr.open(message.method, message.action);
-    xhr.setRequestHeader("Authorization", OAuth.getAuthorizationHeader("", message.parameters));
-    xhr.onload = function() {
+    this.xhr = Titanium.Network.createHTTPClient();
+    this.xhr.open(message.method, message.action);
+    this.xhr.setRequestHeader("Authorization", OAuth.getAuthorizationHeader("", message.parameters));
+    this.xhr.onload = function() {
       try {
         var result = eval('(' + this.responseText + ')');
         Titanium.API.info("twitter success: " + result);
@@ -39,12 +38,17 @@ var TwitterAPI = {};
         Titanium.API.error("twitter error:" + e);
       }
     };
-    xhr.onerror = function(e) {
+    this.xhr.onerror = function(e) {
       Titanium.API.error("twitter error: " + e);
     };
     
-    xhr.send({
+    this.xhr.send({
       status: message.parameters.status
     });
+  };
+  
+  TwitterAPI.release = function() {
+    this.xhr.onerror = null;
+    this.xhr.onload = null;
   };
 })();
