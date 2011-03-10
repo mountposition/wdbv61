@@ -32,11 +32,11 @@ public final class Wdbv61AppInfo implements ITiAppInfo
 	}
 	
 	public String getPublisher() {
-		return "not specified";
+		return "gihyo.co.jp";
 	}
 	
 	public String getUrl() {
-		return "not specified";
+		return "http://www.gihyo.co.jp";
 	}
 	
 	public String getCopyright() {
@@ -44,7 +44,7 @@ public final class Wdbv61AppInfo implements ITiAppInfo
 	}
 	
 	public String getDescription() {
-		return "not specified";
+		return "wdbv61 sample app";
 	}
 	
 	public String getIcon() {

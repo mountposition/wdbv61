@@ -31,7 +31,7 @@ var TwitterAPI = {};
     this.xhr.setRequestHeader("Authorization", OAuth.getAuthorizationHeader("", message.parameters));
     this.xhr.onload = function() {
       try {
-        var result = eval('(' + this.responseText + ')');
+        var result = JSON.parse(this.responseText);
         Titanium.API.info("twitter success: " + result);
       } 
       catch (e) {
